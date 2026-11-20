@@ -7,15 +7,14 @@ export function getRandomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export async function lerpTo(el: HTMLElement, value: string, speed: number = 0.15) {
+/*export async function lerpTo(el: HTMLElement, value: string, speed: number = 0.15) {
     return new Promise( (resolve, reject) => {
 
     })
-}
+}*/
 
-//TODO: All of this
-/*
 export async function fadeTo(el: HTMLElement, targetOpacity: number, speed = 0.15) {
+  return new Promise<void>((resolve) => {
   let current = parseFloat(getComputedStyle(el).opacity) || 0;
 
   if (targetOpacity > 0 && getComputedStyle(el).display === "none") {
@@ -29,13 +28,14 @@ export async function fadeTo(el: HTMLElement, targetOpacity: number, speed = 0.1
 
     if (Math.abs(targetOpacity - current) < 0.005) {
       current = targetOpacity;
-      el.style.opacity = current;
+      el.style.opacity = current.toString();
       if (current === 0) el.style.display = "none";
       cancelAnimationFrame(rafId);
+      resolve()
       return;
     }
 
-    el.style.opacity = current;
+    el.style.opacity = current.toString();
     rafId = requestAnimationFrame(step);
   }
 
@@ -43,5 +43,5 @@ export async function fadeTo(el: HTMLElement, targetOpacity: number, speed = 0.1
     cancelAnimationFrame(rafId);
   }
   rafId = requestAnimationFrame(step);
+  } )
 }
-  */
