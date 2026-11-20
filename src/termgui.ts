@@ -1,6 +1,7 @@
 const pathElement: HTMLElement | null = document.getElementById('path')
 const currentDir: HTMLElement | null = document.getElementById('currentDir')
 const consoleContents: HTMLElement | null = document.getElementById('consoleContents')
+const backButton = document.querySelector<HTMLButtonElement>('#backButton')
 
 //Holy shit this finna be confusing but idk a better way.
 
@@ -10,7 +11,7 @@ const consoleContents: HTMLElement | null = document.getElementById('consoleCont
 //Object: Array [Text display, onclick code]
 
 const pathToElements: Record<string, [string, string | (() => void)][]> = {
-    "./" : [
+    "/" : [
         [
             "home/", () => {changeDir('home')}
         ],
@@ -27,7 +28,7 @@ const pathToElements: Record<string, [string, string | (() => void)][]> = {
             "var/", () => {changeDir('var')}
         ],
     ],
-    "./home" : [
+    "/home" : [
         [
             "baile/", () => {changeDir("baile")}
         ],
@@ -35,28 +36,31 @@ const pathToElements: Record<string, [string, string | (() => void)][]> = {
             "public/", () => {changeDir("public")}
         ]
     ],
-    "./home/baile" : [
+    "/home/baile" : [
         [
-            "downloads/", () => {changeDir("downloads")}
+            "Downloads/", () => {changeDir("Downloads")}
         ],
         [
-            "images/", () => {changeDir("images")}
+            "Images/", () => {changeDir("Images")}
+        ],
+        [
+            "Videos/", () => {changeDir("Videos")}
         ]
     ],
-    "./home/public" : [
+    "/home/public" : [
         ["well.txt", () => {changeConsole("<p>Well I don't really know why you are here... No-one ever checks the public folder... Freak</p>")}]
     ],
-    "./home/baile/downloads" : [
+    "/home/baile/Downloads" : [
         ["Maxwell.png", () => {changeConsole("<p>Maxwell.png</p><img src='/assets/portfolio/Maxwell.jpg'>", true)}],
-        ["Placeholder.png", () => {changeConsole("<p>File not found.png</p><img class='max-h-1/2' src='/assets/portfolio/missing.jpg'><p>Get it?</p>", true)}],
+        ["Placeholder.png", () => {changeConsole("<p>File not found.png</p><img class='max-h-1/2' src='/images/valve.png'><p>Get it?</p>", true)}],
         ["Nuclear launch codes.txt", () => {changeConsole("<p class='text-center'>You will never get the nuclear launch codes!</p>")}]
     ],
-    "./home/baile/images" : [
-        ["Bailey fun.png", () => {changeConsole("<p>Bailey fun.png</p><img class='max-h-1/2' src='/assets/portfolio/Blil fears for his life.jpg'><p>I think Phil in the seat behind me wants me dead...</p>", true)}],
+    "/home/baile/Images" : [
+        ["Bailey fun.png", () => {changeConsole("<p>Bailey fun.png</p><img class='max-h-1/2' src='/images/Blil fears for his life.jpg'><p>I think Phil in the seat behind me wants me dead...</p>", true)}],
         ["Salt.png", () => {changeConsole("<p>Salt.png</p><img class='max-h-1/2' src='/assets/portfolio/Salt.jpg'>", true)}]
     ],
-    "./Videos" : [
-        ["FurnessCollege.webm", () => {changeConsole('<p>FurnessCollege.webm</p><video src="/assets/portfolio/FurnessCollege.webm" controls>', true)}],
+    "/home/baile/Videos" : [
+        ["FurnessCollege.webm", () => {changeConsole('<p>FurnessCollege.webm</p><video src="/videos/FurnessCollege.webm" controls>', true)}],
     ]
 }
 
@@ -125,7 +129,7 @@ function appendDirContents(newPath: string): void {
             }
         }
         var spanChild: HTMLSpanElement = document.createElement('span')
-        spanChild.classList.add("pl-12", "mt-3", "text-3xl")
+        spanChild.classList.add("pl-4", "mt-2", "text-lg")
         spanChild.appendChild(pChild)
         currentDir.appendChild(spanChild)
     })
@@ -139,11 +143,11 @@ function changeDir(path: string, shouldReturn: boolean = false): void {
     let currentPath: string = pathElement.innerText
 
     if (shouldReturn){
-        if (currentPath.trim() !== "./"){
+        if (currentPath.trim() !== "/"){
             removeDirContents()
-            let parts = currentPath.split("/").filter(Boolean) //Ngl love truthy falsy
+            let parts = currentPath.replace(/^\.\//, "").split("/").filter(Boolean)
             parts.pop()
-            let newPath: string = parts.length > 0 ? `./${parts.join("/")}` : "./"
+            let newPath: string = parts.length > 0 ? `/${parts.join("/")}` : "/"
             pathElement.innerText = newPath
 
             appendDirContents(newPath)
@@ -156,7 +160,7 @@ function changeDir(path: string, shouldReturn: boolean = false): void {
     removeDirContents()
     let directory = path.replace(/^\/+|\/+$/g, "")
     let newPath: string = directory
-        ? currentPath === "./" ? `./${directory}` : `${currentPath}/${directory}`
+        ? currentPath === "/" ? `/${directory}` : `${currentPath}/${directory}`
         : currentPath
     pathElement.innerText = newPath
     appendDirContents(newPath)
@@ -173,6 +177,8 @@ function changeConsole(item: string, useFlexCol: boolean = false): void {
 document.addEventListener("DOMContentLoaded", () => {
     changeDir("", false)
 });
+
+backButton?.addEventListener("click", () => changeDir("", true));
 
 (window as any).changeDir = changeDir;
 

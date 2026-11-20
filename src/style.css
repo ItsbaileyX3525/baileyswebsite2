@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@font-face {
+    font-family: vt323;
+    src: url("/fonts/vt323.ttf") format("truetype");
+}
+
+@theme {
+    --font-vt323: vt323, monospace;
+}
