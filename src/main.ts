@@ -1,15 +1,21 @@
-import { getRandomInt, fadeTo } from "./helpers"
+import { getRandomInt, fadeTo, swipeAway, slideIn } from "./helpers"
 
-const instaLoad: boolean = true
+const instaLoad: boolean = false
 
 const loadConatiner: HTMLElement = document.getElementById("load-container") as HTMLDivElement
 const loadText: HTMLElement = document.getElementById("load-text") as HTMLParagraphElement
 const mainContent: HTMLElement = document.getElementById("main-content") as HTMLDivElement
+const settingsContent: HTMLElement = document.getElementById("settings-content") as HTMLDivElement
+
+let sliding: boolean = false
+let loaded: boolean = false
 
 const doorsMusic: HTMLAudioElement = new Audio("/audio/doors.mp3")
+const halloSound: HTMLAudioElement = new Audio("/audio/hallo.mp3")
+const _tonytonychopperMusic: HTMLAudioElement = new Audio("/audio/BokuWaDoctor.mp3")
 
-const randomQuotes: Array<string> = ["Does anyone even read these?", "Josh is a PP head", "Did you know that you can play with an emulated\n source console here?", "Beware the penar snipper device",
-    "Welcome to my website :3"
+const randomQuotes: Array<string> = ["Does anyone even read these?", "Did you know that you can play with an emulated\nsource console here?", "Beware the penar snipper device",
+    "Welcome to my website :3", "I don't know why I made this site like this", "\"Just don't breathe. Let the liquid into your lungs.\""
 ]
 
 function upgradeRobloxButton(selector = "#roblox-btn") {
@@ -39,7 +45,7 @@ function upgradeRobloxButton(selector = "#roblox-btn") {
         <div class="relative w-fit max-w-full skew-x-[-28deg] rounded-none bg-gradient-to-b from-amber-400 via-orange-500 to-orange-600 px-16 py-4 border-[4px] border-neutral-900 shadow-[0_8px_0_#171717,0_12px_20px_rgba(0,0,0,0.45)] group-hover:from-amber-300 group-hover:via-orange-400 group-hover:to-orange-500 group-active:shadow-[0_2px_0_#171717] transition-all duration-150 overflow-hidden">
         <div class="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/45 to-transparent"></div>
         <div class="pointer-events-none absolute inset-x-0 bottom-0 h-2 bg-orange-800/40"></div>
-        <span class="relative block text-center skew-x-[-22deg] text-4xl md:text-5xl font-bold tracking-wider text-white uppercase roblox-text-stroke"></span>
+        <span class="relative block text-center text-4xl md:text-5xl font-bold tracking-wider text-white uppercase roblox-text-stroke"></span>
         </div>
     `;
 
@@ -52,45 +58,79 @@ function upgradeRobloxButton(selector = "#roblox-btn") {
   }
 }
 
+async function loadOptions(exit: boolean = false) {
+    if (sliding) return
+    if (!exit) {
+        sliding = true
+        await swipeAway(mainContent, "left", -700, 2)
+        await slideIn(settingsContent, -700, "left", 1)
+        sliding = false
+    } else {
+        sliding = true
+        await swipeAway(settingsContent, "left", -700, 2)
+        await slideIn(mainContent, -700, "left", 1)
+        sliding = false
+    }
+}
+
 function loadButtons() {
-    mainContent.style.display = "flex"
-    upgradeRobloxButton(); 
+    mainContent.classList.add("flex")
+    upgradeRobloxButton();
 
     //register buttons to their actions
-    //TODO: This
-    //@ts-ignore
-    const startGame: HTMLButtonElement = document.getElementsByClassName("start-game")[0]
+    const startGame: HTMLButtonElement = document.getElementsByClassName("start-game")[0] as HTMLButtonElement
     startGame.addEventListener("click", () => {
         console.log("started")
+    })
+    const options: HTMLButtonElement = document.getElementsByClassName("options")[0] as HTMLButtonElement
+    options.addEventListener("click", () => {
+        loadOptions()
+    })
+    const leave: HTMLButtonElement = document.getElementsByClassName("leave")[0] as HTMLButtonElement
+    leave.addEventListener("click", () => {
+        window.location.href = "https://roblox.com"
+    })
+    const leaveOptions: HTMLButtonElement = document.getElementsByClassName("leave-options")[0] as HTMLButtonElement
+    leaveOptions.addEventListener("click", () => {
+        loadOptions(true)
     })
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (instaLoad) {
         fadeTo(loadConatiner, 0, 1)
-        fadeTo(mainContent, 1, 1)
+        //fadeTo(mainContent, 1, 1)
+        fadeTo(settingsContent, 1, 1)
         loadButtons()
-        return
     }
+
+    halloSound.play()
     const quote: string = randomQuotes[getRandomInt(0, randomQuotes.length - 1)]
     loadText.innerText = quote 
 
     //Try to autoplay cause you never know
-    doorsMusic.volume = .25
+    doorsMusic.volume = .1
     doorsMusic.play()
 
     //TODO: this
-    setTimeout(async () => {
-        await fadeTo(loadConatiner, 0)
-        console.log("finished anim")
-        fadeTo(mainContent, 1, .02)
-        loadButtons()
-    }, 1250); //Fake loading time or whatnot
+    if (!instaLoad) {
+        setTimeout(async () => {
+            await fadeTo(loadConatiner, 0)
+            loaded = true
+            halloSound.pause()
+            fadeTo(mainContent, 1, .02)
+            loadButtons()
+        }, 1250); //Fake loading time or whatnot        
+    }
+
 })
 
 document.addEventListener("click", () => {
     if (!doorsMusic.paused) {
         return
+    }
+    if (!loaded) {
+        halloSound.play()
     }
     doorsMusic.play()
 })

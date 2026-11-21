@@ -6,10 +6,24 @@
   <link href="/src/style.css" rel="stylesheet">
 </head>
 <body class="m-0 bg-gray-700 text-white flex w-full h-screen font-fredoka">
+  <div id="container-mover-swipe" class="absolute w-full h-full m-0 overflow-hidden"></div>
+  <div id="container-mover-slide" class="absolute w-full h-full m-0 overflow-hidden"></div>
   <div id="main-content" class="opacity-0 hidden text-2xl flex-col w-full h-full items-start ml-12 justify-center gap-6">
     <button class="start-game" id="roblox-btn">START</button>
-    <button id="roblox-btn">OPTIONS</button>
-    <button id="roblox-btn">LEAVE</button>
+    <button class="options" id="roblox-btn">OPTIONS</button>
+    <button class="leave" id="roblox-btn">LEAVE</button>
+  </div>
+
+  <!--Settings screen-->
+
+  <div id="settings-content" class="absolute inset-0 z-10 opacity-0 hidden">
+    <div id="items" class="flex h-full flex-col pt-12 pb-4">
+      <div class="flex ml-2">
+        <p>Master volume: </p>
+        <input type="range" min="0" max="100" value="10" class="w-1/5 ml-3">
+      </div>
+      <button class="leave-options mt-auto ml-12" id="roblox-btn">Return</button>
+    </div>
   </div>
 
   <!--Mrrp-->
